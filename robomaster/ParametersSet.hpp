@@ -1,9 +1,10 @@
 #define uchar unsigned char 
+
 struct Angle_Pitch {
 	Angle_Pitch() :angle_pitch(0.0) {}
     double angle_pitch;
 };
-
+enum EnumyColor { RED = 0, BLUE = 1};
 
 struct ArmorParam
 {

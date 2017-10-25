@@ -1,4 +1,4 @@
-#include "ParamtersSet.hpp"
+#include "ParametersSet.hpp"
 #include <opencv2/core.hpp>
 #include <string>
 

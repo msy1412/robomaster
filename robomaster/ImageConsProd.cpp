@@ -4,6 +4,7 @@
 #include "RuneDetector.hpp"
 #include "ResFilter.hpp"
 #include "AngleSolver.hpp"
+#include "AngleSolverFactory.hpp"
 #include "Serial.hpp" 
 #include "RMVideoCapture.hpp"
 #include <opencv2/imgcodecs.hpp>
@@ -48,15 +49,15 @@ void ImageConsProd::ImageConsumer()
     {
         return;
     }
-    cv::Mat cam_matrix, distortion_coef;  //相机矩阵 和 倾斜系数  歪曲系数
+    cv::Mat cam_matrix, distortion_coeff;  //相机矩阵 和 倾斜系数  歪曲系数
     int delay_time;
     fs["Camera_Matrix"] >> cam_matrix;
-    fs["Distortion Coefficients"] >> distortion_coef;
+    fs["Distortion Coefficients"] >> distortion_coeff;
     fs["Delay_Time"] >> delay_time;
 
     AngleSolver angle_solver(cam_matrix, distortion_coeff, 21.6, 5.4, _settings->_scale_z_480, _settings->_min_detect_distance, _settings->_max_detect_distance);
 
-    Point2f image_center = Point2f(cam_matrix.at<double>(0, 2), cam_matrix.at<double>(1, 2));  //获取中心zuobiao
+    cv::Point2f image_center = cv::Point2f(cam_matrix.at<double>(0, 2), cam_matrix.at<double>(1, 2));  //获取中心zuobiao
 
     //parameters of PTZ and barrel
     const double overlap_dist = 100000.0;
@@ -71,18 +72,18 @@ void ImageConsProd::ImageConsumer()
     cv::Mat r_camera_ptz(3, 3, CV_64FC1, r_data);
 
     angle_solver.setRelationPoseCameraPTZ(r_camera_ptz, t_camera_ptz, barrel_ptz_offset_y);
-    AngleSolverFactory angle_slover_factory;
-    angle_slover_factory.setTargetSize(21.6, 5.4, AngleSolverFactory::TARGET_ARMOR);
-    angle_slover_factory.setTargetSize(12.4, 5.4, AngleSolverFactory::TARGET_SAMLL_ATMOR);
+    AngleSolverFactory angle_solver_factory;
+    angle_solver_factory.setTargetSize(21.6, 5.4, AngleSolverFactory::TARGET_ARMOR);
+    angle_solver_factory.setTargetSize(12.4, 5.4, AngleSolverFactory::TARGET_SMALL_ARMOR);
     angle_slover_factory.setTargetSize(28.0, 16.0, AngleSolverFactory::TARGET_RUNE);
 
     Predictor predictor;
     //load armor detector template;
     ArmorDetector armor_detector(this->_settings->_armor);
     cv::Mat template_img = cv::imread(this->_settings->_template_image_file);
-    cv::Mat template_img =  cv::imread(this->_settings->_small_template_image_file);
+    cv::Mat small_template_img =  cv::imread(this->_settings->_small_template_image_file);
 
-    armor_detector.initTemplate(template_img);
+    armor_detector.initTemplate(template_img, small_template_img);
     armor_detector.setPnPSolver(&angle_solver);
     ArmorFilter armor_filter(3);
 
@@ -130,12 +131,13 @@ void ImageConsProd::ImageConsumer()
             }
             armor_detector.setPitchAngle(this->_pitch_param->angle_pitch);
             //检测出来了矩形
-            rect = armor_detector.getTargetAera(frame);
+            rect = armor_detector.getTargetArea(frame);
 
             //找到矩形中心并将数据转换成car可以直接使用的坐标
-            bool is_small = armor_filter.getResult(armor_detector.isSmallArmor());
+            bool is_small = armor_detector.isSmallArmor();
             AngleSolverFactory::TargetType type = is_small ? AngleSolverFactory::TARGET_SAMLL_ATMOR : AngleSolverFactory::TARGET_ARMOR;
-            if (angle_slover_factory.getAngle(rect, type, angle_x, angle_y, _settings->_bullet_speed, _pitch_param->angle_pitch) == true) {
+            if (angle_slover_factory.getAngle(rect, type, angle_x, angle_y, _settings->_bullet_speed, _pitch_param->angle_pitch) == true) 
+            {
                 
             miss_detection_cnt = 0;
             // using history data to predict the motion
@@ -143,8 +145,8 @@ void ImageConsProd::ImageConsumer()
             double z = angle_slover_factory.getSolver().position_in_camera.at<double>(2,0);
             double angle_x_predict = predictor.predict(frame_num + 1.0);
 
-            send_data[0] = (angle_x_predict + offset_anlge_x) * 100;   // send_X
-            send_data[1] = (angle_y + offset_anlge_y) * 100;           // send_y
+            send_data[0] = (angle_x_predict + offset_angle_x) * 100;   // send_X
+            send_data[1] = (angle_y + offset_angle_y) * 100;           // send_y
             send_data[2] = 1;                                          // send_z
 
             // send data to car
