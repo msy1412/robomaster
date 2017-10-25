@@ -118,7 +118,7 @@ void ImageConsProd::ImageConsumer()
         frame_num = capturedata[csmIdx % BUFFER_SIZE].frame;
         ++csmIdx;
 
-        if (this->_settings->_mode == ARMOR_MODE)  //ARMOR detect mode
+        if (this->_settings->_mode == ARMOR_MODE)  //ARMOR detect modes
         {
             armor_detector.setPara(this->_settings->_armor);
             angle_slover_factory.setSolver(&angle_solver);
@@ -142,7 +142,7 @@ void ImageConsProd::ImageConsumer()
             miss_detection_cnt = 0;
             // using history data to predict the motion
             predictor.setRecord(angle_x, frame_num);
-            double z = angle_slover_factory.getSolver().position_in_camera.at<double>(2,0);
+            double z = angle_slover_factory.getSolver().position_in_camera.at(2,0);
             double angle_x_predict = predictor.predict(frame_num + 1.0);
 
             send_data[0] = (angle_x_predict + offset_angle_x) * 100;   // send_X

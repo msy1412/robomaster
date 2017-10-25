@@ -18,7 +18,7 @@ void AngleSolverFactory::setTargetSize(double width, double height, TargetType t
 
 bool AngleSolverFactory::getAngle(const cv::RotatedRect & rect, TargetType type, double & angle_x, double & angle_y, double bullet_speed, double current_ptz_angle, const cv::Point2f & offset)
 {
-    if(slover == NULL){
+    if(solver == NULL){
         std::cerr << "slover not set\n";
         return false;
     }
@@ -39,7 +39,7 @@ bool AngleSolverFactory::getAngle(const cv::RotatedRect & rect, TargetType type,
     }
     cv::RotatedRect rect_rectifid = rect;  // target of rotated_erct
     AngleSolverFactory::adjustRect2FixedRatio(rect_rectifid, width/height);
-    slover->setTargetSize(width, height);
+    solver->setTargetSize(width, height);
 
-    return slover->getAngle(rect_rectifid, angle_x, angle_y, bullet_speed, current_ptz_angle, offset);
+    return solver->getAngle(rect_rectifid, angle_x, angle_y, bullet_speed, current_ptz_angle, offset);
 }
