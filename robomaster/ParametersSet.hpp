@@ -8,8 +8,8 @@ enum EnumyColor { RED = 0, BLUE = 1};
 
 struct ArmorParam
 {
-	uchar min_light_gray;
-	uchar min_light_height;	
+	uchar min_light_gray;  //灯柱的最小灰度值
+	uchar min_light_height;	 //灯柱高度最小值
 
 	uchar avg_contrast_threshold;
 

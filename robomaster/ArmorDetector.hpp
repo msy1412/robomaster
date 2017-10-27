@@ -60,8 +60,8 @@ private:
     cv::Mat _binary_template;
     cv::Mat _binary_template_small;
     cv::Mat _src;
-    cv::Mat _g;
-    cv::Mat _ec;
+    cv::Mat _g;  // green channel 
+    cv::Mat _ec;  // The enemy color channel
     cv::Mat _max_color;
     cv::Size _size;
 };
