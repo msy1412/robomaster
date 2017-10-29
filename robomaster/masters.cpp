@@ -8,7 +8,7 @@
 int main(int argc, char * argv[])
 {
     
-        char * config_file_name = "/home/ubuntu/base/param_config.xml"; 
+        const char * config_file_name = ".//param_config.xml"; 
         if (argc > 1)
             config_file_name = argv[1];
     
@@ -17,7 +17,7 @@ int main(int argc, char * argv[])
         
         int fd2car = Serial::openPort("/dev/ttyTHS2");
         Serial::configurePort(fd2car);
-    
+     
         ImageConsProd image_cons_prod(&setting, &pitch_param, fd2car);
     
         std::thread task0(&ImageConsProd::ImageProducer, image_cons_prod); 

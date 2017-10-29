@@ -1,3 +1,5 @@
+#ifndef RMVIDEO
+#define RMVIDEO
 #include <opencv2/core.hpp>
 class RMVideoCapture {
 public:
@@ -38,3 +40,5 @@ private:
     MapBuffer * mb;
     const char * video_path; 
 };
+
+#endif

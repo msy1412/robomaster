@@ -1,3 +1,6 @@
+#ifndef AngleSolver_H
+#define AngleSolver_H
+
 #include <opencv2/core.hpp>
 
 class RectPnPSolver
@@ -65,3 +68,5 @@ private:
     double max_distance;
     double scale_z;
 };
+
+#endif

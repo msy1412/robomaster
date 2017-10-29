@@ -1,10 +1,13 @@
+#ifndef AngleSolverFactory_H
+#define AngleSolverFactory_H
+
 #include <opencv2/core.hpp>
 #include "AngleSolver.hpp"
 
 class AngleSolverFactory
 {
 public:
-    typedef enum {TARGET_RUNE, TARGET_ARMOR, TARGET_SAMLL_ATMOR} TargetType;
+    typedef enum {TARGET_RUNE, TARGET_ARMOR, TARGET_SMALL_ARMOR} TargetType;
     AngleSolverFactory(AngleSolver * angle_solver = NULL): solver(angle_solver){}
     void setSolver(AngleSolver * angle_slover)
     {
@@ -33,3 +36,5 @@ private:
     double rune_height;
     AngleSolver * solver;
 };
+
+#endif

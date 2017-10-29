@@ -1,4 +1,4 @@
-#include "ImageConsProd.hpp"
+#include "ImageConsProd.hpp" 
 #include "Predictor.hpp"
 #include "ArmorDetector.hpp"
 #include "RuneDetector.hpp"
@@ -45,7 +45,7 @@ void ImageConsProd::ImageConsumer()
 {
     //load calibration parameters
     cv::FileStorage fs("/home/cam_intrinsic.xml", cv::FileStorage::READ);
-    if (!fs.isOpened)
+    if (!fs.isOpened())
     {
         return;
     }
@@ -74,8 +74,8 @@ void ImageConsProd::ImageConsumer()
     angle_solver.setRelationPoseCameraPTZ(r_camera_ptz, t_camera_ptz, barrel_ptz_offset_y);
     AngleSolverFactory angle_solver_factory;
     angle_solver_factory.setTargetSize(21.6, 5.4, AngleSolverFactory::TARGET_ARMOR);
-    angle_solver_factory.setTargetSize(12.4, 5.4, AngleSolverFactory::TARGET_SMALL_ARMOR);
-    angle_slover_factory.setTargetSize(28.0, 16.0, AngleSolverFactory::TARGET_RUNE);
+    angle_solver_factory.setTargetSize(12.4, 5.4, AngleSolverFactory::TARGET_SMALL_ARMOR); 
+    angle_solver_factory.setTargetSize(28.0, 16.0, AngleSolverFactory::TARGET_RUNE); 
 
     Predictor predictor;
     //load armor detector template;
@@ -89,7 +89,7 @@ void ImageConsProd::ImageConsumer()
 
     //rune detection
     const RuneParam &runeparm = this->_settings->_rune;
-    RuneDector rune_detector(runeparm.sudoku_cell_width, runeparm.sudoku_cell_height, true,RuneDetector::RUNE_CANNY);
+    RuneDetector rune_detector(runeparm.sudoku_cell_width, runeparm.sudoku_cell_height, true,RuneDetector::RUNE_CANNY);
     RuneResFilter filter(runeparm.shoot_filter_size, runeparm.shoot_time_gap);
 
 
@@ -121,7 +121,7 @@ void ImageConsProd::ImageConsumer()
         if (this->_settings->_mode == ARMOR_MODE)  //ARMOR detect modes
         {
             armor_detector.setPara(this->_settings->_armor);
-            angle_slover_factory.setSolver(&angle_solver);
+            angle_solver_factory.setSolver(&angle_solver);
             if(frame.rows == 720)
             {
                 this->_settings->_armor.max_light_delta_h = 700;
@@ -135,14 +135,14 @@ void ImageConsProd::ImageConsumer()
 
             //找到矩形中心并将数据转换成car可以直接使用的坐标
             bool is_small = armor_detector.isSmallArmor();
-            AngleSolverFactory::TargetType type = is_small ? AngleSolverFactory::TARGET_SAMLL_ATMOR : AngleSolverFactory::TARGET_ARMOR;
-            if (angle_slover_factory.getAngle(rect, type, angle_x, angle_y, _settings->_bullet_speed, _pitch_param->angle_pitch) == true) 
+            AngleSolverFactory::TargetType type = is_small ? AngleSolverFactory::TARGET_SMALL_ARMOR : AngleSolverFactory::TARGET_ARMOR;
+            if (angle_solver_factory.getAngle(rect, type, angle_x, angle_y, _settings->_bullet_speed, _pitch_param->angle_pitch) == true) 
             {
                 
             miss_detection_cnt = 0;
             // using history data to predict the motion
             predictor.setRecord(angle_x, frame_num);
-            double z = angle_slover_factory.getSolver().position_in_camera.at(2,0);
+            double z = angle_solver_factory.getSolver().position_in_camera.at<double>(2,0);
             double angle_x_predict = predictor.predict(frame_num + 1.0);
 
             send_data[0] = (angle_x_predict + offset_angle_x) * 100;   // send_X
@@ -180,9 +180,9 @@ void ImageConsProd::ImageConsumer()
             if (filter.setRecord(rune_result.second) && filter.getResult())	
 			{
                 rect = rune_detector.getRect(rune_result.first);
-				if (angle_slover_factory.getAngle(rect, AngleSolverFactory::TARGET_RUNE, angle_x, angle_y, _settings->_bullet_speed, _pitch_param->angle_pitch) == true) {
-                    send_data[0] = (angle_x + offset_anlge_x) * 100;
-                    send_data[1] = (angle_y + offset_anlge_y) * 100;
+				if (angle_solver_factory.getAngle(rect, AngleSolverFactory::TARGET_RUNE, angle_x, angle_y, _settings->_bullet_speed, _pitch_param->angle_pitch) == true) {
+                    send_data[0] = (angle_x + offset_angle_x) * 100;
+                    send_data[1] = (angle_y + offset_angle_y) * 100;
                     send_data[2] = rune_result.second + 1;
 
                     if (last_rune_idx != send_data[2]){
@@ -218,8 +218,6 @@ void ImageConsProd::ImageConsumer()
                 }
             }
         } // end rune system
-
-        }
         else
         {  //如果给出的指示都不是两种模式，那就进行各个指标的更改。
             miss_detection_cnt = 0;

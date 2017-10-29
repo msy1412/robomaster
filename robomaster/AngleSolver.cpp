@@ -25,9 +25,9 @@ void RectPnPSolver::solvePnP4Points(const std::vector<cv::Point2f> & points2d, c
 }
 void AngleSolver::setRelationPoseCameraPTZ(const cv::Mat & rot_camera_ptz, const cv::Mat & trans_camera_ptz, double y_offset_barrel_ptz)
 {
-    rot_camera_ptz.copyTo(rot_camera2ptz);
-    trans_camera_ptz.copyTo(trans_camera2ptz);
-    offset_y_barrel_ptz = y_offset_barrel_ptz;
+    rot_camera_ptz.copyTo(this->rot_camera2ptz);
+    trans_camera_ptz.copyTo(this->trans_camera2ptz);
+    this->offset_y_barrel_ptz = y_offset_barrel_ptz;
 }
 
 bool AngleSolver::getAngle(const cv::RotatedRect & rect, double & angle_x, double & angle_y, double bullet_speed, double current_ptz_angle, const cv::Point2f & offset)
@@ -59,7 +59,7 @@ bool AngleSolver::getAngle(const cv::RotatedRect & rect, double & angle_x, doubl
 
 void AngleSolver::tranformationCamera2PTZ(const cv::Mat & pos, cv::Mat & transed_pos)
 {
-    transed_pos = rot_camera2ptz * pos - trans_camera2ptz;
+    transed_pos = this->rot_camera2ptz * pos - this->trans_camera2ptz;
 }
 
 void AngleSolver::adjustPTZ2Barrel(const cv::Mat & pos_in_ptz, double & angle_x, double & angle_y, double bullet_speed, double current_ptz_angle)
@@ -72,20 +72,20 @@ void AngleSolver::adjustPTZ2Barrel(const cv::Mat & pos_in_ptz, double & angle_x,
     double xyz[3] = {_xyz[0], _xyz[1] - offset_gravity, _xyz[2]};
     double alpha = 0.0, theta = 0.0;
 
-    alpha = asin(offset_y_barrel_ptz/sqrt(xyz[1]*xyz[1] + xyz[2]*xyz[2]));
+    alpha = std::asin(offset_y_barrel_ptz/sqrt(xyz[1]*xyz[1] + xyz[2]*xyz[2]));
     if(xyz[1] < 0){
-        theta = atan(-xyz[1]/xyz[2]);
+        theta = std::atan(-xyz[1]/xyz[2]);
         angle_y = -(alpha+theta);  // camera coordinate
     }
     else if (xyz[1] < offset_y_barrel_ptz){
-        theta = atan(xyz[1]/xyz[2]);
+        theta = std::atan(xyz[1]/xyz[2]);
         angle_y = -(alpha-theta);  // camera coordinate
     }
     else{
-        theta = atan(xyz[1]/xyz[2]);
+        theta = std::atan(xyz[1]/xyz[2]);
         angle_y = (theta-alpha);   // camera coordinate
     }
-    angle_x = atan2(xyz[0], xyz[2]);
+    angle_x = std::atan2(xyz[0], xyz[2]);
     //cout << "angle_x: " << angle_x << "\tangle_y: " << angle_y <<  "\talpha: " << alpha << "\ttheta: " << theta << endl;
     angle_x = angle_x * 180 / 3.1415926;
     angle_y = angle_y * 180 / 3.1415926;

@@ -1,4 +1,6 @@
-#define uchar unsigned char 
+#ifndef ParametersSet_H
+#define ParametersSet_H 
+typedef unsigned char uchar ;
 
 struct Angle_Pitch {
 	Angle_Pitch() :angle_pitch(0.0) {}
@@ -30,7 +32,8 @@ struct ArmorParam
 
     uchar enemy_color;
 
-    ArmorParam(){
+    ArmorParam()
+    {
         min_light_gray = 210;
 		min_light_height = 8;
         avg_contrast_threshold = 110;
@@ -60,3 +63,5 @@ struct RuneParam
         shoot_filter_size = 5;
     }
 };
+
+#endif

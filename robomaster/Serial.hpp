@@ -1,4 +1,5 @@
-
+#ifndef Serial_H
+#define Serial_H
 class Serial
 {
 public:
@@ -8,3 +9,4 @@ public:
     static bool sendXYZ(int fd, double * xyz);
     static bool sendData(int fd, char * data, int size, DATATYPE data_tpye);
 };
+#endif

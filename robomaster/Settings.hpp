@@ -1,3 +1,5 @@
+#ifndef Setting_H
+#define Setting_H
 #include "ParametersSet.hpp"
 #include <opencv2/core.hpp>
 #include <string>
@@ -23,3 +25,5 @@ public:
     double _bullet_speed;
     double _scale_z_480;    // has issue
 };
+
+#endif

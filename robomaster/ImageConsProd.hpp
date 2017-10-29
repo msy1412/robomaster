@@ -1,3 +1,5 @@
+#ifndef ImageConsProd_H
+#define ImageConsProd_H
 #include "Settings.hpp"
 class ImageConsProd {
 public:
@@ -14,3 +16,5 @@ public:
     Angle_Pitch * _pitch_param;
     int _fd2car;
 };
+
+#endif

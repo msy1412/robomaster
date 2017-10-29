@@ -1,3 +1,5 @@
+#ifndef ArmorDetector_H
+#define ArmorDetector_H
 #include "AngleSolver.hpp"
 #include <opencv2/highgui.hpp>
 #include "ParametersSet.hpp"
@@ -5,7 +7,7 @@
 class ArmorDetector
 {
 public:
-    ArmorDetector(const ArmorParam & para = ArmorParam());
+    ArmorDetector(const ArmorParam &para = ArmorParam());
 
     void setPara(const ArmorParam &param) { this->_para = param;}
 
@@ -28,6 +30,8 @@ public:
 private:
     void setImage(const cv::Mat &src);
 
+    double PointDist(const cv::Point &p1, const cv::Point &p2);
+
     int templateDist(const cv::Mat &img, bool is_small);
 
     void findContourInEnemyColor(
@@ -48,6 +52,9 @@ private:
         cv::RotatedRect adjustRRect(const cv::RotatedRect & rect);
 
         bool makeRectSafe(cv::Rect & rect, cv::Size size);
+        
+        bool broadenRect(cv::Rect & rect, int width_added, int height_added, cv::Size size);
+        
 private:
     AngleSolver *m_solver;
     double pitch_angle;
@@ -65,3 +72,5 @@ private:
     cv::Mat _max_color;
     cv::Size _size;
 };
+
+#endif
