@@ -1,5 +1,6 @@
 #ifndef ArmorDetector_H
 #define ArmorDetector_H
+
 #include "AngleSolver.hpp"
 #include <opencv2/highgui.hpp>
 #include "ParametersSet.hpp"
@@ -7,7 +8,7 @@
 class ArmorDetector
 {
 public:
-    ArmorDetector(const ArmorParam &para = ArmorParam());
+    ArmorDetector(const ArmorParam &para);
 
     void setPara(const ArmorParam &param) { this->_para = param;}
 
@@ -51,7 +52,7 @@ private:
 
         cv::RotatedRect adjustRRect(const cv::RotatedRect & rect);
 
-        bool makeRectSafe(cv::Rect & rect, cv::Size size);
+        bool makeRectSafe(cv::Rect &rect, cv::Size size);
         
         bool broadenRect(cv::Rect & rect, int width_added, int height_added, cv::Size size);
         

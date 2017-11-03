@@ -26,7 +26,8 @@
         "type_traits": "cpp",
         "typeinfo": "cpp",
         "utility": "cpp",
-        "complex": "cpp"
+        "complex": "cpp",
+        "thread": "cpp"
     },
     "clang.executable": "/usr/bin/clang",
     "clang.completion.enable": true,

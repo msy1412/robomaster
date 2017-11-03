@@ -3,6 +3,19 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+AngleSolver::AngleSolver(const cv::Mat &camera_matrix, const cv::Mat &dist_coeff,
+    double target_width = 0.0, double target_height = 0.0, double z_scale = 1.0,
+    double min_dist = 50.0, double max_dist = 600.0) : RectPnPSolver(camera_matrix, dist_coeff, target_width, target_height)
+{
+
+    this->min_distance = min_dist;
+    this->max_distance = max_dist;
+
+    this->rot_camera2ptz = cv::Mat::eye(3,3,CV_64FC1);
+    this->trans_camera2ptz = cv::Mat::zeros(3,1,CV_64FC1);
+    this->offset_y_barrel_ptz = 0;
+    this->scale_z = z_scale;
+}
 void RectPnPSolver::solvePnP4Points(const std::vector<cv::Point2f> & points2d, cv::Mat & rot, cv::Mat & trans)
 {
     if(width_target < 10e-5 || height_target < 10e-5){

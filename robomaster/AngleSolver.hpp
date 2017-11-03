@@ -42,9 +42,9 @@ public:
 class AngleSolver : public RectPnPSolver
 {
 public:
-    AngleSolver(const cv::Mat & camera_matrix, const cv::Mat & dist_coeff,
-        double target_width = 0, double target_height = 0, double z_scale = 1.0,
-        double min_dist = 50.0, double max_dist = 600.0);
+    AngleSolver(const cv::Mat &camera_matrix, const cv::Mat &dist_coeff,
+        double target_width, double target_height, double z_scale,
+        double min_dist, double max_dist);
     void setScaleZ(double scale) {this->scale_z = scale;}
     void setRelationPoseCameraPTZ(const cv::Mat & rot_camera_ptz, const cv::Mat & trans_camera_ptz, double y_offset_barrel_ptz);
     void getTarget2dPoinstion(const cv::RotatedRect & rect, std::vector<cv::Point2f> & target2d, const cv::Point2f & offset);

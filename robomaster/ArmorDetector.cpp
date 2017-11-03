@@ -37,6 +37,20 @@ void ArmorDetector::reset()
     this->_is_lost = true;
 }
 
+void ArmorDetector::initTemplate(const cv::Mat & _template, const cv::Mat & _template_small)
+{
+    std::vector<cv::Mat> bgr;
+    bgr.resize(3);
+    split(_template, bgr);
+
+    cv::Mat temp_green;
+    resize(bgr[1], temp_green, cv::Size(100,25));
+    cv::threshold(temp_green, _binary_template, 128, 255, cv::THRESH_OTSU);
+
+    split(_template_small, bgr);
+    resize(bgr[1], temp_green, cv::Size(100,25));
+    cv::threshold(temp_green, _binary_template_small, 128, 255, cv::THRESH_OTSU);
+}
 cv::RotatedRect ArmorDetector::getTargetArea(const cv::Mat & src)
 {
 	setImage(src);
@@ -766,10 +780,10 @@ bool ArmorDetector::broadenRect(cv::Rect &rect, int width_added, int height_adde
     rect.width += width_added * 2;
     rect.y -= height_added;
     rect.height += height_added * 2;
-    return makeRectSafe(rect, size);
+    return this->makeRectSafe(rect, size);
 }
 
-bool makeRectSafe(cv::Rect &rect, cv::Size &size)
+bool ArmorDetector::makeRectSafe(cv::Rect &rect, cv::Size size)
 {
     if (rect.x < 0)
     {

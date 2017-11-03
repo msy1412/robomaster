@@ -1,37 +1,42 @@
-cc=g++ -std=c++11  #support C++11 standard
+gc=g++ -std=c++11 -g
+
+#support C++11 standard
 cvIpath=-I/usr/local/OpenCV/include/ #opencv include path
-cvLib=`pkg-config --libs opencv`  # opencv libs
+cvLib=-L/usr/local/OpenCV/lib -lopencv_shape -lopencv_stitching\
+ 	-lopencv_objdetect -lopencv_superres -lopencv_videostab \
+	 -lopencv_calib3d -lopencv_features2d -lopencv_highgui \
+	 -lopencv_videoio -lopencv_imgcodecs -lopencv_video \
+	 -lopencv_photo -lopencv_ml -lopencv_imgproc -lopencv_flann \
+	 -lopencv_core  
+	 # opencv libs
 
 
 program =  ImageConsProd.o masters.o
-ImageProd = ImageConsProd.o AngleSolver.o AngleSolverFactory.o\
-			ArmorDetector.o Predictor.o ResFilter.o RMVideoCapture.o \
-			RuneDetector.o Serial.o Setting.o
+ImageProd = RMVideoCapture.o Serial.o Settings.o AngleSolver.o \
+			AngleSolverFactory.o\
+			ArmorDetector.o Predictor.o ResFilter.o  \
+			RuneDetector.o  ImageConsProd.o
 
-main: masters.o image.o
-	cc -o masters masters.o image.o
-masters : $program
-	cc -c masters.cpp
-Set.o : Setting.cpp Setting.hpp ParametersSet.hpp
-	cc -c Setting.cpp $(cvIpath) $(cvLib)
-Ser : Serial.hpp Serial.cpp
-	cc -c Serial.cpp
-RMV : RMVideoCapture.hpp RMVideoCapture.cpp
-	cc -c RMVideoCapture.cpp
-Res : ResFilter.cpp ResFilter.hpp
-	cc -c ResFilter.cpp
-Pre : Predictor.cpp Predictor.hpp
-	cc -c Predictor.cpp
-Arm : ArmorDetector.hpp ArmorDetector.cpp
-	cc -c ArmorDetector.cpp
-AngSF : AngleSolverFactory.hpp AngleSolverFactory.cpp
-	cc -c AngleSolverFactory.cpp
-AngS : AngleSolver.hpp AngleSolver.cpp
-	cc -c AngleSolver.cpp
-ImgP : ImageConsProd.cpp ImageConsProd.hpp 
-	cc -c ImageConsProd.cpp
-ImageProdLink :  $(ImageProd)
-	cc -o image.o $(ImageProd)
+main : masters ImageProdLink
+	g++ -o masters masters.o $(ImageProd) $(cvIpath) ${cvLib} -lpthread
+
+
+masters : masters.cpp
+	${gc} -c masters.cpp
+ImageProdLink :  
+	${gc} -c Settings.cpp 
+	${gc} -c Serial.cpp 
+	${gc} -c RMVideoCapture.cpp 
+	${gc} -c ResFilter.cpp 
+	${gc} -c Predictor.cpp 
+	${gc} -c ArmorDetector.cpp 
+	${gc} -c AngleSolverFactory.cpp 
+	${gc} -c AngleSolver.cpp	
+	${gc} -c RuneDetector.cpp
+	${gc} -c ImageConsProd.cpp
 
 clean:
 	rm *.o masters
+
+all:
+	echo ${cvLib}

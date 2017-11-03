@@ -10,7 +10,7 @@ void AngleSolverFactory::setTargetSize(double width, double height, TargetType t
         armor_width = width;
         armor_height = height;
     }
-    else if(type == TARGET_SAMLL_ATMOR){
+    else if(type == TARGET_SMALL_ARMOR){
         small_armor_width = width;
         small_armor_height = height;
     }
@@ -25,15 +25,18 @@ bool AngleSolverFactory::getAngle(const cv::RotatedRect & rect, TargetType type,
 
     double width = 0.0, height = 0.0;
 
-    if(type == TARGET_RUNE){
+    if(type == TARGET_RUNE)
+    {
         width = rune_width;
         height = rune_height;
     }
-    else if(type == TARGET_ARMOR){
+    else if(type == TARGET_ARMOR)
+    {
         width = armor_width;
         height = armor_height;
     }
-    else if(type == TARGET_SAMLL_ATMOR){
+
+    else if(type == TARGET_SMALL_ARMOR){
         width = small_armor_width;
         height = small_armor_height;
     }

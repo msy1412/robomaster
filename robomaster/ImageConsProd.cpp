@@ -1,4 +1,5 @@
 #include "ImageConsProd.hpp" 
+#include <iostream>
 #include "Predictor.hpp"
 #include "ArmorDetector.hpp"
 #include "RuneDetector.hpp"
@@ -8,9 +9,12 @@
 #include "Serial.hpp" 
 #include "RMVideoCapture.hpp"
 #include <opencv2/imgcodecs.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/core.hpp>
 
+#define _SHOW_DETECT_
 #ifndef _SHOW_DETECT_
-//#define _SHOW_DETECT_
+
 #endif
 
 #define VIDEO_WIDTH  640
@@ -155,10 +159,10 @@ void ImageConsProd::ImageConsumer()
 #ifdef _SHOW_DETECT_
             std::cout << "Armor Type: " << (type == AngleSolverFactory::TARGET_ARMOR ? "Large\t" : "Small\t") << "Armor Size: " << rect.size << "\t";
             std::cout << "barrels angle:" << send_data[0] << ", " << send_data[1] << ", "  << send_data[2] << std::endl;
-            Point2f vertices[4];
+            cv::Point2f vertices[4];
             rect.points(vertices);
             for (int i = 0; i < 4; i++)
-                line(frame, vertices[i], vertices[(i + 1) % 4], Scalar(0, 255, 0));
+                cv::line(frame, vertices[i], vertices[(i + 1) % 4], cv::Scalar(0, 255, 0));
 #endif
             }
             else 
@@ -198,10 +202,10 @@ void ImageConsProd::ImageConsumer()
                         Serial::sendXYZ(_fd2car, send_data); // [angleX  angleY  Index]
 #ifdef _SHOW_DETECT_
 					std::cout << "barrels angle:(" << send_data[0] << ", " << send_data[1] << ") - index: " << send_data[2] << std::endl;
-					Point2f vertices[4];
+					cv::Point2f vertices[4];
 					rect.points(vertices);
 					for (int i = 0; i < 4; i++)
-						cv::line(frame, vertices[i], vertices[(i + 1) % 4], Scalar(0, 255, 0));
+						cv::line(frame, vertices[i], vertices[(i + 1) % 4], cv::Scalar(0, 255, 0));
 #endif
                 }
             }
@@ -236,7 +240,7 @@ void ImageConsProd::ImageConsumer()
             cv::imshow("frame", frame);
             cv::waitKey(delay_time);
         }
-        catch(cv::Excepthins e)
+        catch(cv::Exception e)
         {
             std::cout << "error" << std::endl;
         }
