@@ -1,0 +1,2 @@
+PROJECT(main)
+ADD_SUBDIRECTORY(robomaster)
